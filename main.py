@@ -53,6 +53,28 @@ cancel_btn.grid(row=4, column=0, columnspan=2, padx=15, pady=5)
 
 access_account_frame = Frame(main_window)
 
+account_names = get_all_account_names()
+
+#datatype
+clicked = StringVar(access_account_frame)
+
+if len(account_names) > 0:
+    clicked.set(account_names[0])
+
+    accounts_drop_down = OptionMenu(access_account_frame, clicked, *account_names)
+    accounts_drop_down.pack()
+else:
+    clicked.set('No accounts exists')
+    accounts_drop_down = OptionMenu(access_account_frame, clicked, 'No accounts exists')
+    accounts_drop_down.pack()
+
+def access_account_to_menu_frame():
+    menu_frame.pack()
+    access_account_frame.pack_forget()
+
+back_btn = Button(access_account_frame, text='Back', command=access_account_to_menu_frame, padx=5, pady=2)
+back_btn.pack(pady=10)
+
 def add_account_info():
     account_name_field.delete(0, END)
     username_field.delete(0, END)
@@ -60,6 +82,12 @@ def add_account_info():
 
     add_account_frame.pack()
     menu_frame.pack_forget()
+
+def access_account_info():
+    access_account_frame.pack()
+    menu_frame.pack_forget()
+
+
 
 title_label = Label(menu_frame, text='Password Keeper')
 title_label.config(font=('Arial', 25))
@@ -69,7 +97,7 @@ add_account_btn = Button(menu_frame, text='Add Account Info', command=add_accoun
 add_account_btn.config(font=('Arial', 15))
 add_account_btn.pack(padx=20, pady=5)
 
-access_account_btn = Button(menu_frame, text='Access Account Info')
+access_account_btn = Button(menu_frame, text='Access Account Info', command=access_account_info)
 access_account_btn.config(font=('Arial', 15))
 access_account_btn.pack(padx=20, pady=5)
 
