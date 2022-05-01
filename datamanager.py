@@ -1,4 +1,5 @@
 import sqlite3
+import random
 
 file_name = 'database.db'
 
@@ -12,16 +13,19 @@ def create_table():
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
         AccountName text,
         Username text,
-        EncryptedPassword text,
-        EncryptedPasswordInNums text
+        EncryptedPassword text
     )
+
     """
     )
 
     db.commit()
     db.close()
 
-def add_row(account_name, username, encrypted_password, encrypted_password_in_nums):
+
+
+
+def add_row(account_name, username, encrypted_password):
     db = sqlite3.connect(file_name)
 
     cursor = db.cursor()
@@ -37,12 +41,15 @@ def add_row(account_name, username, encrypted_password, encrypted_password_in_nu
             break
 
     if info_valid == True:
-        cursor.execute("INSERT INTO accounts values(null, '" + account_name + "', '" + username + "', '" + encrypted_password + "', '" + encrypted_password_in_nums + "')")
+        cursor.execute("INSERT INTO accounts values(null, '" + account_name + "', '" + username + "', '" + encrypted_password + "')")
 
     db.commit()
     db.close()
 
     return info_valid
+
+
+
 
 def get_account_info(account_name):
     db = sqlite3.connect(file_name)
@@ -51,18 +58,19 @@ def get_account_info(account_name):
 
     cursor.execute("SELECT * FROM Accounts WHERE AccountName = '" + account_name + "'")
 
+    account_info = []
+
     for row in cursor.fetchall():
-        account_info = [row[2], row[3], row[4]]
-
-        db.commit()
-        db.close()
-
-        return account_info
+        account_info.append(row[2])
+        account_info.append(row[3])
 
     db.commit()
     db.close()
 
-    return ''
+    return account_info
+
+
+
 
 def get_all_account_names():
     db = sqlite3.connect(file_name)
@@ -80,3 +88,35 @@ def get_all_account_names():
     db.close()
 
     return accounts
+
+
+
+
+def remove_account_info(encrypted_account_name):
+    db = sqlite3.connect(file_name)
+
+    cursor = db.cursor()
+
+    account_removed = False
+
+    if len(get_account_info(encrypted_account_name)) > 0:
+        cursor.execute("DELETE FROM Accounts WHERE AccountName = '" + encrypted_account_name + "'")
+        account_removed = True
+
+    db.commit()
+    db.close()
+
+    return account_removed
+
+
+
+
+def remove_all_accounts_info():
+    db = sqlite3.connect(file_name)
+
+    cursor = db.cursor()
+
+    cursor.execute("DELETE FROM Accounts")
+
+    db.commit()
+    db.close()
