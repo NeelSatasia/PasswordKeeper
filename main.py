@@ -1,30 +1,46 @@
 from datamanager import *
 from getpass import getpass
-import random
 
-create_table()
+create_database()
 
-print('\nCommands:\n')
-
-print('\tAdd An Account:             /add')
-print('\tRemove An Account:          /remove')
-print('\tRemove All Accounts:        /remove all')
-print('\tAccess An Account:          /access')
-print('\tAccess All Account Names:   /access account names')
-print('\tClose Program:              /close')
-
-print()
-
+show_commands = '/show commands'
 add_account = '/add'
 remove_account = '/remove'
 remove_all_accounts = '/remove all'
 access_account = '/access'
 access_all_account_names = '/access account names'
+change_account_name_command = '/change account name'
+change_username_command = '/change username'
+change_password_command = '/change password'
+cancel_a_command = '/cancel'
 close_program = '/close'
+
+def show_all_commands():
+    print('\n\nCommands:\n')
+
+    print('\tAdd an account:                  ' + add_account)
+    print('\tRemove an account:               ' + remove_account)
+    print('\tRemove all accounts:             ' + remove_all_accounts)
+    print('\tAccess an account:               ' + access_account)
+    print('\tAccess all account names:        ' + access_all_account_names)
+    print('\tChange account name:             ' + change_account_name_command)
+    print('\tChange username of an account:   ' + change_username_command)
+    print('\tChange password of an account:   ' + change_password_command)
+    print('\tExit from current command:       ' + cancel_a_command)
+    print('\tClose program:                   ' + close_program)
+
+show_all_commands()
+
+print("""\nEncryption Key Info: It must include all the characters that will be used in creating account names, usernames, and passwords which doesn't have to be in order.
+                     For example, it can be 'oiuypnmbvcds2311' and these characters will be used based on their positions in the key to encrypt and decrypt a account info.""")
+
+print()
 
 failed_to_encrypt = '(Failed to encrypt!)'
 failed_to_decrypt = '(Failed to decrypt!)'
 account_search_failure = '(Account name does not exist or the encryption key is wrong!)'
+account_name_required_alert = '(Must have an account name!)'
+no_accounts_found = "(There're currently no accounts!)"
 
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
@@ -95,126 +111,149 @@ while True:
 
         input_account_name = input('\tAccount Name: ')
 
-        decryptable = True
-        account_name_valid = True
-        account_name_error = ''
+        if input_account_name != cancel_a_command:
 
-        for encrypted_account_name in get_all_account_names():
-            decrypted_account_name = decrypt(encrypted_account_name)
+            decryptable = True
+            account_name_valid = True
+            account_name_error = ''
 
-            if decrypted_account_name == failed_to_decrypt:
-                decryptable = False
-                break
+            for encrypted_account_name in get_all_account_names():
+                decrypted_account_name = decrypt(encrypted_account_name)
 
-            elif decrypted_account_name == input_account_name:
-                account_name_valid = False
-                account_name_error = '(Account name already exists!)'
-                break
+                if decrypted_account_name == failed_to_decrypt:
+                    decryptable = False
+                    break
 
-        if decryptable == True:
-            if account_name_valid == True and len(input_account_name) == 0:
-                account_name_valid = False
-                account_name_error = '(Must have an account name!)'
+                elif decrypted_account_name == input_account_name:
+                    account_name_valid = False
+                    account_name_error = '(Account name already exists!)'
+                    break
 
-            if account_name_valid == True:
-                input_username = input('\tUsername: ')
-                input_password = getpass('\tPassword (Hidden): ')
-                input_confirm_password = getpass('\tConfirm Password: ')
+            if decryptable == True:
+                if account_name_valid == True and len(input_account_name) == 0:
+                    account_name_valid = False
+                    account_name_error = account_name_required_alert
 
-                if input_password == input_confirm_password:
-                    encrypted_accountname = encrypt(input_account_name)
-                    encrypted_username = encrypt(input_username)
-                    encrypted_password = encrypt(input_password)
+                if account_name_valid == True:
+                    input_username = input('\tUsername: ')
 
-                    if encrypted_accountname != failed_to_encrypt and encrypted_username != failed_to_encrypt and encrypted_password != failed_to_encrypt:
-                        add_row(encrypted_accountname, encrypted_username, encrypted_password)
+                    if input_username != cancel_a_command:
+                        input_password = getpass('\tPassword (Hidden): ')
 
-                    else:
-                        print('\n\t\t' + failed_to_encrypt)
+                        if input_password != cancel_a_command:
+                            input_confirm_password = getpass('\tConfirm Password: ')
+
+                            if input_confirm_password != cancel_a_command:
+
+                                if input_password == input_confirm_password:
+                                    encrypted_account_name = encrypt(input_account_name)
+
+                                    encrypted_username = ''
+
+                                    if len(input_username) > 0:
+                                        encrypted_username = encrypt(input_username)
+
+                                    encrypted_password = encrypt(input_password)
+
+                                    if encrypted_account_name != failed_to_encrypt and encrypted_username != failed_to_encrypt and encrypted_password != failed_to_encrypt:
+                                        add_row(encrypted_account_name, encrypted_username, encrypted_password)
+
+                                    else:
+                                        print('\n\t\t' + failed_to_encrypt)
+
+                                else:
+                                    print('\n\t\t(Passwords do not match!)')
 
                 else:
-                    print('\n\t\t(Password does not match!)')
-
-                print()
+                    print('\n\t\t' + account_name_error)
 
             else:
-                print('\n\t\t' + account_name_error + '\n')
+                print("\n\t\t(Failed to scan existing account names to check if the given account name exists in the database!)")
 
-        else:
-            print("\t\t(Failed to scan existing account names to check if the given account name exists in the database!)\n")
-
-
+        print()
 
     elif input_command == access_account:
 
         input_account_name = input('\tAccount Name: ')
+        print()
 
-        encrypted_account_name = encrypt(input_account_name)
+        if input_account_name != cancel_a_command:
 
-        account_info = get_account_info(encrypted_account_name)
+            encrypted_account_name = encrypt(input_account_name)
 
-        if len(account_info) > 0:
-            encrypted_username = account_info[0]
-            encrypted_password = account_info[1]
+            account_info = get_account_info(encrypted_account_name)
 
-            decrypted_username = decrypt(encrypted_username)
-            decrypted_password = decrypt(encrypted_password)
+            if len(account_info) > 0:
+                encrypted_username = account_info[0]
+                encrypted_password = account_info[1]
 
-            print()
+                decrypted_username = decrypt(encrypted_username)
+                decrypted_password = decrypt(encrypted_password)
 
-            if decrypted_username != failed_to_decrypt and decrypted_password != failed_to_decrypt:
-                if len(decrypted_username) > 0:
-                    print('\t\tUsername: ' + decrypted_username)
+                print()
 
-                print('\t\tPassword: ' + decrypted_password + '\n')
+                if decrypted_username != failed_to_decrypt and decrypted_password != failed_to_decrypt:
+                    if len(decrypted_username) > 0:
+                        print('\t\tUsername: ' + decrypted_username)
 
-                print('\t\t(If the password is not correct when you used it to login then the encryption key must be wrong!)\n')
+                    print('\t\tPassword: ' + decrypted_password + '\n')
+
+                    print('\t\t(If the password is not correct when you used it to login then the encryption key must be wrong!)\n')
+
+                else:
+                    print('\t\t' + failed_to_decrypt + '\n')
 
             else:
-                print('\t\t' + failed_to_decrypt + '\n')
-
-        else:
-            print('\n\t\t' + account_search_failure + '\n')
+                print('\t\t' + account_search_failure + '\n')
 
 
 
 
     elif input_command == remove_account:
 
-        input_account_name = input('\tAccount Name: ')
-        print()
+        if len(get_all_account_names()) > 0:
 
-        encrypted_account_name = encrypt(input_account_name)
+            input_account_name = input('\tAccount Name: ')
+            print()
 
-        if encrypted_account_name == failed_to_encrypt:
-            print('\t\t' + failed_to_encrypt + '\n')
+            if input_account_name != cancel_a_command:
+                encrypted_account_name = encrypt(input_account_name)
 
-        elif remove_account_info(encrypted_account_name) == True:
-            print('\t\t(Account info removed)\n')
+                if encrypted_account_name == failed_to_encrypt:
+                    print('\t\t' + failed_to_encrypt + '\n')
+
+                elif remove_account_info(encrypted_account_name) == True:
+                    print('\t\t(Account info removed)\n')
+
+                else:
+                    print('\t\t' + account_search_failure + '\n')
 
         else:
-            print('\t\t' + account_search_failure + '\n')
-
+            print('\t' + no_accounts_found + '\n')
 
 
 
 
     elif input_command == remove_all_accounts:
 
-        while True:
-            input_confirmation = input('\tConfirm? (Yes or No): ')
-            print()
+        if len(get_all_account_names()) > 0:
 
-            if input_confirmation == 'Yes':
-                remove_all_accounts_info()
-
-                print("\t\t(All accounts' info is deleted)\n")
-
-                break
-
-            elif input_confirmation == 'No':
+            while True:
+                input_confirmation = input('\tConfirm? (Yes or No): ')
                 print()
-                break
+
+                if input_confirmation == 'Yes':
+                    remove_all_accounts_info()
+
+                    print("\t\t(All accounts' info is deleted)\n")
+
+                    break
+
+                elif input_confirmation == 'No' or input_confirmation == cancel_a_command:
+                    break
+
+        else:
+            print('\t' + no_accounts_found + '\n')
 
 
 
@@ -228,7 +267,127 @@ while True:
                 print(str(i + 1) + '. ' + account_names[i] + '\n')
 
         else:
-            print('\t(0 accounts found!)\n')
+            print('\t' + no_accounts_found + '\n')
+
+
+
+
+    elif input_command == change_account_name_command:
+        input_account_name = input('\tAccount Name: ')
+        print()
+
+        if len(input_account_name) == 0:
+            print('\t\t' + account_name_required_alert + '\n')
+
+        elif input_account_name != cancel_a_command:
+
+            encrypted_account_name = encrypt(input_account_name)
+
+            if encrypted_account_name == failed_to_encrypt:
+                print('\t\t' + failed_to_encrypt + '\n')
+
+            elif len(get_account_info(encrypted_account_name)) > 0:
+                input_new_account_name = input('\t\tNew Account Name: ')
+                print()
+
+                if len(input_new_account_name) > 0:
+
+                    if input_new_account_name != cancel_a_command:
+                        encrypted_new_account_name = encrypt(input_new_account_name)
+
+                        if encrypted_new_account_name == failed_to_encrypt:
+                            print('\t\t\t' + failed_to_encrypt + '\n')
+
+                        else:
+                            change_account_name(encrypted_account_name, encrypted_new_account_name)
+
+                else:
+                    print('\t\t\t(Account must have a name!)\n')
+
+            else:
+                print('\t\t' + account_search_failure + '\n')
+
+
+
+
+    elif input_command == change_username_command:
+
+        input_account_name = input('\tAccount Name: ')
+        print()
+
+        if len(input_account_name) == 0:
+            print('\t\t' + account_name_required_alert + '\n')
+
+        elif input_account_name != cancel_a_command:
+            encrypted_account_name = encrypt(input_account_name)
+
+            if encrypted_account_name == failed_to_encrypt:
+                print('\t\t' + failed_to_encrypt + '\n')
+
+            elif len(get_account_info(encrypted_account_name)) > 0:
+                input_new_username = input('\t\tNew Username: ')
+                print()
+
+                if input_new_username != cancel_a_command:
+                    if len(input_new_username) > 0:
+                        encrypted_new_username = encrypt(input_new_username)
+
+                        change_username(encrypted_account_name, encrypted_new_username)
+
+                    else:
+                        change_username(encrypted_account_name, '')
+
+            else:
+                print('\t\t' + account_search_failure + '\n')
+
+
+
+
+
+    elif input_command == change_password_command:
+        input_account_name = input('\tAccount Name: ')
+        print()
+
+        if len(input_account_name) == 0:
+            print('\t\t' + account_name_required_alert + '\n')
+
+        elif input_account_name != cancel_a_command:
+            encrypted_account_name = encrypt(input_account_name)
+
+            if encrypted_account_name == failed_to_encrypt:
+                print('\t\t' + failed_to_encrypt + '\n')
+
+            elif len(get_account_info(encrypted_account_name)) > 0:
+                input_new_password = getpass('\t\tNew Password: ')
+
+                if len(input_new_password) > 0:
+
+                    if input_new_password != cancel_a_command:
+                        input_confirm_new_password = getpass('\t\tConfirm Password: ')
+                        print()
+
+                        if input_confirm_new_password != cancel_a_command:
+
+                            if input_new_password == input_confirm_new_password:
+                                encrypted_new_password = encrypt(input_new_password)
+
+                                change_password(encrypted_account_name, encrypted_new_password)
+
+                            else:
+                                print('\t\t\t(Passwords do not match!)\n')
+
+                else:
+                    print('\t\t\t(New password cannot be empty!)\n')
+
+
+            else:
+                print('\t\t' + account_search_failure + '\n')
+
+
+
+    elif input_command == show_commands:
+        show_all_commands()
+
 
 
     elif input_command == close_program:
