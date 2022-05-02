@@ -3,7 +3,7 @@ import random
 
 file_name = 'database.db'
 
-def create_table():
+def create_database():
     db = sqlite3.connect(file_name)
     cursor = db.cursor()
 
@@ -11,8 +11,8 @@ def create_table():
     """
     CREATE TABLE IF NOT EXISTS Accounts (
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        AccountName text,
-        Username text,
+        EncryptedAccountName text,
+        EncryptedUsername text,
         EncryptedPassword text
     )
 
@@ -30,7 +30,7 @@ def add_row(account_name, username, encrypted_password):
 
     cursor = db.cursor()
 
-    cursor.execute("SELECT AccountName FROM Accounts")
+    cursor.execute("SELECT EncryptedAccountName FROM Accounts")
 
     info_valid = True
 
@@ -56,7 +56,7 @@ def get_account_info(account_name):
 
     cursor = db.cursor()
 
-    cursor.execute("SELECT * FROM Accounts WHERE AccountName = '" + account_name + "'")
+    cursor.execute("SELECT * FROM Accounts WHERE EncryptedAccountName = '" + account_name + "'")
 
     account_info = []
 
@@ -77,7 +77,7 @@ def get_all_account_names():
 
     cursor = db.cursor()
 
-    cursor.execute("SELECT AccountName FROM Accounts")
+    cursor.execute("SELECT EncryptedAccountName FROM Accounts")
 
     accounts = []
 
@@ -100,7 +100,7 @@ def remove_account_info(encrypted_account_name):
     account_removed = False
 
     if len(get_account_info(encrypted_account_name)) > 0:
-        cursor.execute("DELETE FROM Accounts WHERE AccountName = '" + encrypted_account_name + "'")
+        cursor.execute("DELETE FROM Accounts WHERE EncryptedAccountName = '" + encrypted_account_name + "'")
         account_removed = True
 
     db.commit()
@@ -117,6 +117,40 @@ def remove_all_accounts_info():
     cursor = db.cursor()
 
     cursor.execute("DELETE FROM Accounts")
+
+    db.commit()
+    db.close()
+
+
+
+def change_account_name(encrypted_old_account_name, encrypted_new_account_name):
+    db = sqlite3.connect(file_name)
+
+    cursor = db.cursor()
+
+    cursor.execute("UPDATE Accounts SET EncryptedAccountName = '" + encrypted_new_account_name + "' WHERE EncryptedAccountName = '" + encrypted_old_account_name + "'")
+
+    db.commit()
+    db.close()
+
+
+def change_username(encrypted_account_name, encrypted_new_username):
+    db = sqlite3.connect(file_name)
+
+    cursor = db.cursor()
+
+    cursor.execute("UPDATE Accounts SET EncryptedUsername = '" + encrypted_new_username + "' WHERE EncryptedAccountName = '" + encrypted_account_name + "'")
+
+    db.commit()
+    db.close()
+
+
+def change_password(encrypted_account_name, encrypted_new_password):
+    db = sqlite3.connect(file_name)
+
+    cursor = db.cursor()
+
+    cursor.execute("UPDATE Accounts SET EncryptedPassword = '" + encrypted_new_password + "' WHERE EncryptedAccountName = '" + encrypted_account_name + "'")
 
     db.commit()
     db.close()
