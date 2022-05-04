@@ -1,5 +1,7 @@
 from datamanager import *
 from getpass import getpass
+import os
+import random
 
 create_database()
 
@@ -31,9 +33,6 @@ def show_all_commands():
 
 show_all_commands()
 
-print("""\nEncryption Key Info: It must include all the characters that will be used in creating account names, usernames, and passwords which doesn't have to be in order.
-                     For example, it can be 'oiuypnmbvcds2311' and these characters will be used based on their positions in the key to encrypt and decrypt a account info.""")
-
 print()
 
 failed_to_encrypt = '(Failed to encrypt!)'
@@ -42,23 +41,44 @@ account_search_failure = '(Account name does not exist or the encryption key is 
 account_name_required_alert = '(Must have an account name!)'
 no_accounts_found = "(There're currently no accounts!)"
 
-letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-
-input_encryption_key = input("Enter Encryption Key: ")
-print()
+characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+              'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+              '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+              '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', ',', '.', '/', '?', '-', '_', '+', '=', ' ']
 
 encryption_key = []
 
-for character in input_encryption_key:
-    encryption_key.append(character)
 
-    if character in letters:
-        encryption_key.append(character.upper())
+if len(get_encryption_key_info()) == 0:
+    for character in characters:
+        encryption_key.append(character)
 
-encryted_characters = []
+    random.shuffle(encryption_key)
+
+    encrypted_key = ''
+
+    for encrypted_character_index in range(len(encryption_key)):
+        encrypted_key += (' ' * (characters.index(encryption_key[encrypted_character_index]) + 1))
+
+        if encrypted_character_index < len(encryption_key) - 1:
+            encrypted_key += '\t'
+
+    add_encryption_key(encrypted_key)
+
+else:
+    uploaded_encrypted_key = get_encryption_key_info()
+
+    encrypted_key = uploaded_encrypted_key.split('\t')
+
+    for encrypted_character in encrypted_key:
+        encryption_key.append(characters[len(encrypted_character) - 1])
+
+
+encrypted_characters = []
+
 
 for character_index in range(len(encryption_key)):
-    encryted_characters.append(' ' * (character_index + 1))
+    encrypted_characters.append(' ' * (character_index + 1))
 
 
 
@@ -72,7 +92,7 @@ def encrypt(text):
 
     try:
         for i in range(len(text_characters)):
-            encrypted_text += encryted_characters[encryption_key.index(text_characters[i])]
+            encrypted_text += encrypted_characters[encryption_key.index(text_characters[i])]
 
             if i < len(text_characters) - 1:
                 encrypted_text += '\t'
@@ -174,37 +194,40 @@ while True:
 
     elif input_command == access_account:
 
-        input_account_name = input('\tAccount Name: ')
-        print()
+        if len(get_all_account_names()) > 0:
 
-        if input_account_name != cancel_a_command:
+            input_account_name = input('\tAccount Name: ')
+            print()
 
-            encrypted_account_name = encrypt(input_account_name)
+            if input_account_name != cancel_a_command:
 
-            account_info = get_account_info(encrypted_account_name)
+                encrypted_account_name = encrypt(input_account_name)
 
-            if len(account_info) > 0:
-                encrypted_username = account_info[0]
-                encrypted_password = account_info[1]
+                account_info = get_account_info(encrypted_account_name)
 
-                decrypted_username = decrypt(encrypted_username)
-                decrypted_password = decrypt(encrypted_password)
+                if len(account_info) > 0:
+                    encrypted_username = account_info[0]
+                    encrypted_password = account_info[1]
 
-                print()
+                    decrypted_username = decrypt(encrypted_username)
+                    decrypted_password = decrypt(encrypted_password)
 
-                if decrypted_username != failed_to_decrypt and decrypted_password != failed_to_decrypt:
-                    if len(decrypted_username) > 0:
-                        print('\t\tUsername: ' + decrypted_username)
+                    if decrypted_username != failed_to_decrypt and decrypted_password != failed_to_decrypt:
+                        if len(decrypted_username) > 0:
+                            print('\t\tUsername: ' + decrypted_username)
 
-                    print('\t\tPassword: ' + decrypted_password + '\n')
+                        print('\t\tPassword: ' + decrypted_password + '\n')
 
-                    print('\t\t(If the password is not correct when you used it to login then the encryption key must be wrong!)\n')
+                        print('\t\t(If the password is not correct when you used it to login then the encryption key must be wrong!)\n')
+
+                    else:
+                        print('\t\t' + failed_to_decrypt + '\n')
 
                 else:
-                    print('\t\t' + failed_to_decrypt + '\n')
+                    print('\t\t' + account_search_failure + '\n')
 
-            else:
-                print('\t\t' + account_search_failure + '\n')
+        else:
+            print('\t' + no_accounts_found + '\n')
 
 
 
@@ -264,7 +287,13 @@ while True:
         if(len(account_names) > 0):
 
             for i in range(len(account_names)):
-                print(str(i + 1) + '. ' + account_names[i] + '\n')
+                decrypted_account_name = decrypt(account_names[i])
+
+                if decrypted_account_name == failed_to_decrypt:
+                    print('\t' + str(i + 1) + '. ' + failed_to_decrypt + '\n')
+
+                else:
+                    print('\t' + str(i + 1) + '. ' + decrypted_account_name + '\n')
 
         else:
             print('\t' + no_accounts_found + '\n')
