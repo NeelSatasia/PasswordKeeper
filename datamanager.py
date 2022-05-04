@@ -9,11 +9,23 @@ def create_database():
 
     cursor.execute(
     """
+
     CREATE TABLE IF NOT EXISTS Accounts (
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
         EncryptedAccountName text,
         EncryptedUsername text,
         EncryptedPassword text
+    )
+
+    """
+    )
+
+    cursor.execute(
+    """
+
+    CREATE TABLE IF NOT EXISTS EncryptionKey (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Key text
     )
 
     """
@@ -48,6 +60,35 @@ def add_row(account_name, username, encrypted_password):
 
     return info_valid
 
+
+
+def add_encryption_key(key):
+    db = sqlite3.connect(file_name)
+
+    cursor = db.cursor()
+
+    cursor.execute("INSERT INTO EncryptionKey values(null, '" + key + "')")
+
+    db.commit()
+    db.close()
+
+
+def get_encryption_key_info():
+    db = sqlite3.connect(file_name)
+
+    cursor = db.cursor()
+
+    cursor.execute("SELECT Key FROM EncryptionKey WHERE ID = 1")
+
+    key = ''
+
+    for value in cursor.fetchall():
+        key = value[0]
+
+    db.commit()
+    db.close()
+
+    return key
 
 
 
