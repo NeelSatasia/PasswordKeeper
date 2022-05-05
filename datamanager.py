@@ -3,33 +3,22 @@ import random
 
 file_name = 'database.db'
 
+#colum names
+accounts = 'Accounts'
+password_keeper_info = 'PasswordKeeperInfo'
+ID = 'ID'
+encrypted_account_name = 'EncryptedAccountName'
+encrypted_username = 'EncryptedUsername'
+encrypted_password = 'EncryptedPassword'
+key_login_password = 'KeyAndLoginPassword'
+
 def create_database():
     db = sqlite3.connect(file_name)
     cursor = db.cursor()
 
-    cursor.execute(
-    """
+    cursor.execute("CREATE TABLE IF NOT EXISTS " + accounts + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + encrypted_account_name + " text, " + encrypted_username + " text, " + encrypted_password + " text)")
 
-    CREATE TABLE IF NOT EXISTS Accounts (
-        ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        EncryptedAccountName text,
-        EncryptedUsername text,
-        EncryptedPassword text
-    )
-
-    """
-    )
-
-    cursor.execute(
-    """
-
-    CREATE TABLE IF NOT EXISTS EncryptionKey (
-        ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        Key text
-    )
-
-    """
-    )
+    cursor.execute("CREATE TABLE IF NOT EXISTS " + password_keeper_info + "(" + ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + key_login_password + " text)")
 
     db.commit()
     db.close()
@@ -37,23 +26,23 @@ def create_database():
 
 
 
-def add_row(account_name, username, encrypted_password):
+def add_row(input_encrypted_account_name, input_encrypted_username, input_encrypted_password):
     db = sqlite3.connect(file_name)
 
     cursor = db.cursor()
 
-    cursor.execute("SELECT EncryptedAccountName FROM Accounts")
+    cursor.execute("SELECT " + encrypted_account_name + " FROM " + accounts)
 
     info_valid = True
 
     for stored_accountname in cursor.fetchall():
-        if stored_accountname == account_name:
+        if stored_accountname == input_encrypted_account_name:
             prin('\n\tAccount name already exists')
             info_valid = False
             break
 
     if info_valid == True:
-        cursor.execute("INSERT INTO accounts values(null, '" + account_name + "', '" + username + "', '" + encrypted_password + "')")
+        cursor.execute("INSERT INTO " + accounts + " values(null, '" + input_encrypted_account_name + "', '" + input_encrypted_username + "', '" + input_encrypted_password + "')")
 
     db.commit()
     db.close()
@@ -62,33 +51,35 @@ def add_row(account_name, username, encrypted_password):
 
 
 
-def add_encryption_key(key):
+def add_password_keeper_info(value):
     db = sqlite3.connect(file_name)
 
     cursor = db.cursor()
 
-    cursor.execute("INSERT INTO EncryptionKey values(null, '" + key + "')")
+    cursor.execute("INSERT INTO " + password_keeper_info + " values(null, '" + value + "')")
 
     db.commit()
     db.close()
 
 
-def get_encryption_key_info():
+def get_password_keeper_info(id):
     db = sqlite3.connect(file_name)
 
     cursor = db.cursor()
 
-    cursor.execute("SELECT Key FROM EncryptionKey WHERE ID = 1")
+    cursor.execute("SELECT " + key_login_password + " FROM " + password_keeper_info + " WHERE " + ID + " = " + str(id))
 
-    key = ''
+    info = ''
 
     for value in cursor.fetchall():
-        key = value[0]
+        info = value[0]
 
     db.commit()
     db.close()
 
-    return key
+    return info
+
+
 
 
 
@@ -97,7 +88,7 @@ def get_account_info(account_name):
 
     cursor = db.cursor()
 
-    cursor.execute("SELECT * FROM Accounts WHERE EncryptedAccountName = '" + account_name + "'")
+    cursor.execute("SELECT * FROM " + accounts + " WHERE " + encrypted_account_name + " = '" + account_name + "'")
 
     account_info = []
 
@@ -118,30 +109,30 @@ def get_all_account_names():
 
     cursor = db.cursor()
 
-    cursor.execute("SELECT EncryptedAccountName FROM Accounts")
+    cursor.execute("SELECT " + encrypted_account_name + " FROM " + accounts)
 
-    accounts = []
+    accounts_list = []
 
     for stored_accountname in cursor.fetchall():
-        accounts.append(stored_accountname[0])
+        accounts_list.append(stored_accountname[0])
 
     db.commit()
     db.close()
 
-    return accounts
+    return accounts_list
 
 
 
 
-def remove_account_info(encrypted_account_name):
+def remove_account_info(input_encrypted_account_name):
     db = sqlite3.connect(file_name)
 
     cursor = db.cursor()
 
     account_removed = False
 
-    if len(get_account_info(encrypted_account_name)) > 0:
-        cursor.execute("DELETE FROM Accounts WHERE EncryptedAccountName = '" + encrypted_account_name + "'")
+    if len(get_account_info(input_encrypted_account_name)) > 0:
+        cursor.execute("DELETE FROM " + accounts + " WHERE " + encrypted_account_name + " = '" + input_encrypted_account_name + "'")
         account_removed = True
 
     db.commit()
@@ -157,7 +148,7 @@ def remove_all_accounts_info():
 
     cursor = db.cursor()
 
-    cursor.execute("DELETE FROM Accounts")
+    cursor.execute("DELETE FROM " + accounts)
 
     db.commit()
     db.close()
@@ -169,29 +160,29 @@ def change_account_name(encrypted_old_account_name, encrypted_new_account_name):
 
     cursor = db.cursor()
 
-    cursor.execute("UPDATE Accounts SET EncryptedAccountName = '" + encrypted_new_account_name + "' WHERE EncryptedAccountName = '" + encrypted_old_account_name + "'")
+    cursor.execute("UPDATE Accounts SET " + encrypted_account_name + " = '" + encrypted_new_account_name + "' WHERE " + encrypted_account_name + " = '" + encrypted_old_account_name + "'")
 
     db.commit()
     db.close()
 
 
-def change_username(encrypted_account_name, encrypted_new_username):
+def change_username(input_encrypted_account_name, input_encrypted_new_username):
     db = sqlite3.connect(file_name)
 
     cursor = db.cursor()
 
-    cursor.execute("UPDATE Accounts SET EncryptedUsername = '" + encrypted_new_username + "' WHERE EncryptedAccountName = '" + encrypted_account_name + "'")
+    cursor.execute("UPDATE Accounts SET " + encrypted_username + " = '" + input_encrypted_new_username + "' WHERE " + encrypted_account_name + " = '" + input_encrypted_account_name + "'")
 
     db.commit()
     db.close()
 
 
-def change_password(encrypted_account_name, encrypted_new_password):
+def change_password(input_encrypted_account_name, input_encrypted_new_password):
     db = sqlite3.connect(file_name)
 
     cursor = db.cursor()
 
-    cursor.execute("UPDATE Accounts SET EncryptedPassword = '" + encrypted_new_password + "' WHERE EncryptedAccountName = '" + encrypted_account_name + "'")
+    cursor.execute("UPDATE Accounts SET " + encrypted_password + " = '" + input_encrypted_new_password + "' WHERE " + encrypted_account_name + " = '" + input_encrypted_account_name + "'")
 
     db.commit()
     db.close()
