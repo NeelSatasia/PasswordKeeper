@@ -26,31 +26,6 @@ def create_database():
 
 
 
-def add_row(input_encrypted_account_name, input_encrypted_username, input_encrypted_password):
-    db = sqlite3.connect(file_name)
-
-    cursor = db.cursor()
-
-    cursor.execute("SELECT " + encrypted_account_name + " FROM " + accounts)
-
-    info_valid = True
-
-    for stored_accountname in cursor.fetchall():
-        if stored_accountname == input_encrypted_account_name:
-            prin('\n\tAccount name already exists')
-            info_valid = False
-            break
-
-    if info_valid == True:
-        cursor.execute("INSERT INTO " + accounts + " values(null, '" + input_encrypted_account_name + "', '" + input_encrypted_username + "', '" + input_encrypted_password + "')")
-
-    db.commit()
-    db.close()
-
-    return info_valid
-
-
-
 def add_password_keeper_info(value):
     db = sqlite3.connect(file_name)
 
@@ -79,6 +54,39 @@ def get_password_keeper_info(id):
 
     return info
 
+
+def change_password_keeper_info(id, encrypted_new_info):
+    db = sqlite3.connect(file_name)
+
+    cursor = db.cursor()
+
+    cursor.execute("UPDATE " + password_keeper_info + " SET " + key_login_password + " = '" + encrypted_new_info + "' WHERE " + ID + " = " + str(id))
+
+    db.commit()
+    db.close()
+
+def add_row(input_encrypted_account_name, input_encrypted_username, input_encrypted_password):
+    db = sqlite3.connect(file_name)
+
+    cursor = db.cursor()
+
+    cursor.execute("SELECT " + encrypted_account_name + " FROM " + accounts)
+
+    info_valid = True
+
+    for stored_accountname in cursor.fetchall():
+        if stored_accountname == input_encrypted_account_name:
+            prin('\n\tAccount name already exists')
+            info_valid = False
+            break
+
+    if info_valid == True:
+        cursor.execute("INSERT INTO " + accounts + " values(null, '" + input_encrypted_account_name + "', '" + input_encrypted_username + "', '" + input_encrypted_password + "')")
+
+    db.commit()
+    db.close()
+
+    return info_valid
 
 
 
