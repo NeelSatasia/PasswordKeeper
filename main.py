@@ -1,41 +1,24 @@
 from datamanager import *
 from getpass import getpass
-import os
 import random
+from simple_term_menu import TerminalMenu
 
 create_database()
 
-show_commands = '/show commands'
-add_account = '/add'
-remove_account = '/remove'
-remove_all_accounts = '/remove all'
-access_account = '/access'
-access_all_account_names = '/access account names'
-change_account_name_command = '/change account name'
-change_username_command = '/change username'
-change_password_command = '/change pwd'
-change_login_password_command = '/change login pwd'
-forgot_password = '/forgot login pwd'
+add_account = 'Add'
+remove_account = 'Remove'
+remove_all_accounts = 'Remove All'
+access_account = 'Access'
+access_all_account_names = 'Access Account Names'
+change_account_name_command = 'Change Account Name'
+change_username_command = 'Change Username'
+change_password_command = 'Change Password'
+change_login_password_command = 'Change Login Password'
+forgot_password = 'Forgot Login Password'
 cancel_a_command = '/cancel'
-close_program = '/close'
+close_program = 'Close'
 
-def show_all_commands():
-    print('\n\nCommands:\n')
-
-    print('\tAdd an account:                  ' + add_account)
-    print('\tRemove an account:               ' + remove_account)
-    print('\tRemove all accounts:             ' + remove_all_accounts)
-    print('\tAccess an account:               ' + access_account)
-    print('\tAccess all account names:        ' + access_all_account_names)
-    print('\tChange account name:             ' + change_account_name_command)
-    print('\tChange username of an account:   ' + change_username_command)
-    print('\tChange password of an account:   ' + change_password_command)
-    print('\tExit from current command:       ' + cancel_a_command)
-    print('\tClose program:                   ' + close_program)
-
-show_all_commands()
-
-print()
+print('\n')
 
 failed_to_encrypt = '(Failed to encrypt!)'
 failed_to_decrypt = '(Failed to decrypt!)'
@@ -46,7 +29,7 @@ no_accounts_found = "(There're currently no accounts!)"
 characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
               'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
               '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-              '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', ',', '.', '/', '?', '-', '_', '+', '=', ' ']
+              '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', ',', '.', '/', '?', '-', '_', '+', '=', ' ', '/', ":", ";"]
 
 encryption_key = []
 
@@ -157,15 +140,20 @@ else:
 
 
 
+commands_options = [add_account, remove_account, remove_all_accounts, access_account, access_all_account_names, change_account_name_command, change_username_command, change_password_command,
+                   change_login_password_command, close_program]
+
+commands_menu = TerminalMenu(commands_options)
+
 
 if logged_in == True:
 
     while True:
 
-        input_command = input('Enter a commmand: ')
+        commands_menu_index = commands_menu.show()
         print()
 
-        if input_command ==  add_account:
+        if commands_options[commands_menu_index] ==  add_account:
 
             input_account_name = input('\tAccount Name: ')
 
@@ -193,7 +181,7 @@ if logged_in == True:
                         account_name_error = account_name_required_alert
 
                     if account_name_valid == True:
-                        input_username = input('\tUsername: ')
+                        input_username = input('\tUsername (Optional): ')
 
                         if input_username != cancel_a_command:
                             input_password = getpass('\tPassword (Hidden): ')
@@ -230,7 +218,7 @@ if logged_in == True:
 
             print()
 
-        elif input_command == access_account:
+        elif commands_options[commands_menu_index] == access_account:
 
             if len(get_all_account_names()) > 0:
 
@@ -260,8 +248,6 @@ if logged_in == True:
 
                             print('\t\tPassword: ' + decrypted_password + '\n')
 
-                            print('\t\t(If the password is not correct when you used it to login then the encryption key must be wrong!)\n')
-
                         else:
                             print('\t\t' + failed_to_decrypt + '\n')
 
@@ -274,7 +260,7 @@ if logged_in == True:
 
 
 
-        elif input_command == remove_account:
+        elif commands_options[commands_menu_index] == remove_account:
 
             if len(get_all_account_names()) > 0:
 
@@ -299,7 +285,7 @@ if logged_in == True:
 
 
 
-        elif input_command == remove_all_accounts:
+        elif commands_options[commands_menu_index] == remove_all_accounts:
 
             if len(get_all_account_names()) > 0:
 
@@ -322,7 +308,7 @@ if logged_in == True:
 
 
 
-        elif input_command == access_all_account_names:
+        elif commands_options[commands_menu_index] == access_all_account_names:
 
             account_names = get_all_account_names()
 
@@ -343,7 +329,7 @@ if logged_in == True:
 
 
 
-        elif input_command == change_account_name_command:
+        elif commands_options[commands_menu_index] == change_account_name_command:
             if len(get_all_account_names()) > 0:
 
                 input_account_name = input('\tAccount Name: ')
@@ -386,7 +372,7 @@ if logged_in == True:
 
 
 
-        elif input_command == change_username_command:
+        elif commands_options[commands_menu_index] == change_username_command:
 
             if len(get_all_account_names()) > 0:
 
@@ -425,7 +411,7 @@ if logged_in == True:
 
 
 
-        elif input_command == change_password_command:
+        elif commands_options[commands_menu_index] == change_password_command:
 
             if len(get_all_account_names()) > 0:
 
@@ -472,12 +458,37 @@ if logged_in == True:
 
 
 
-        elif input_command == show_commands:
-            show_all_commands()
-            print()
+        elif commands_options[commands_menu_index] == change_login_password_command:
+            input_current_login_password = getpass('\tEnter current password: ')
+
+            encrypted_current_password = encrypt(input_current_login_password)
+
+            if encrypted_current_password == failed_to_encrypt:
+                print('\t\t' + failed_to_encrypt + '\n')
+
+            else:
+                if encrypted_current_password == get_password_keeper_info(2):
+                    input_new_password = getpass('\tEnter new password: ')
+
+                    if len(input_new_password) > 0:
+                        input_confirm_new_password = getpass('\tConfirm Password: ')
+
+                        if input_new_password == input_confirm_new_password:
+                            encrypted_new_password = encrypt(input_new_password)
+
+                            change_password_keeper_info(2, encrypted_new_password)
+
+                        else:
+                            print('\t\t(Passwords do not match!)\n')
+
+                    else:
+                        print('\t\t(Must enter a password!)\n')
+
+                else:
+                    print('\t\t(Password entered is incorrect!)\n')
 
 
-        elif input_command == close_program:
+        elif commands_options[commands_menu_index] == close_program:
             break
 
 
