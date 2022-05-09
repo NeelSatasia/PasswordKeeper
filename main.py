@@ -218,6 +218,9 @@ if logged_in == True:
 
             print()
 
+
+
+
         elif commands_options[commands_menu_index] == access_account:
 
             if len(get_all_account_names()) > 0:
@@ -305,6 +308,7 @@ if logged_in == True:
 
             else:
                 print('\t' + no_accounts_found + '\n')
+
 
 
 
@@ -458,6 +462,7 @@ if logged_in == True:
 
 
 
+
         elif commands_options[commands_menu_index] == change_login_password_command:
             input_current_login_password = getpass('\tEnter current password: ')
 
@@ -488,10 +493,7 @@ if logged_in == True:
                     print('\t\t(Password entered is incorrect!)\n')
 
 
+
+
         elif commands_options[commands_menu_index] == close_program:
             break
-
-
-
-        else:
-            print('\t(Invalid Command!)\n')

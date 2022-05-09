@@ -37,6 +37,8 @@ def add_password_keeper_info(value):
     db.close()
 
 
+
+
 def get_password_keeper_info(id):
     db = sqlite3.connect(file_name)
 
@@ -55,6 +57,8 @@ def get_password_keeper_info(id):
     return info
 
 
+
+
 def change_password_keeper_info(id, encrypted_new_info):
     db = sqlite3.connect(file_name)
 
@@ -64,6 +68,9 @@ def change_password_keeper_info(id, encrypted_new_info):
 
     db.commit()
     db.close()
+
+
+
 
 def add_row(input_encrypted_account_name, input_encrypted_username, input_encrypted_password):
     db = sqlite3.connect(file_name)
@@ -163,6 +170,7 @@ def remove_all_accounts_info():
 
 
 
+
 def change_account_name(encrypted_old_account_name, encrypted_new_account_name):
     db = sqlite3.connect(file_name)
 
@@ -174,6 +182,8 @@ def change_account_name(encrypted_old_account_name, encrypted_new_account_name):
     db.close()
 
 
+
+
 def change_username(input_encrypted_account_name, input_encrypted_new_username):
     db = sqlite3.connect(file_name)
 
@@ -183,6 +193,8 @@ def change_username(input_encrypted_account_name, input_encrypted_new_username):
 
     db.commit()
     db.close()
+
+
 
 
 def change_password(input_encrypted_account_name, input_encrypted_new_password):
