@@ -144,16 +144,10 @@ def remove_account_info(input_encrypted_account_name):
 
     cursor = db.cursor()
 
-    account_removed = False
-
-    if len(get_account_info(input_encrypted_account_name)) > 0:
-        cursor.execute("DELETE FROM " + accounts + " WHERE " + encrypted_account_name + " = '" + input_encrypted_account_name + "'")
-        account_removed = True
+    cursor.execute("DELETE FROM " + accounts + " WHERE " + encrypted_account_name + " = '" + input_encrypted_account_name + "'")
 
     db.commit()
     db.close()
-
-    return account_removed
 
 
 
