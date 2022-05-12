@@ -3,7 +3,7 @@ import random
 
 file_name = 'database.db'
 
-#colum names
+#column names
 accounts = 'Accounts'
 password_keeper_info = 'PasswordKeeperInfo'
 ID = 'ID'
@@ -11,6 +11,7 @@ encrypted_account_name = 'EncryptedAccountName'
 encrypted_username = 'EncryptedUsername'
 encrypted_password = 'EncryptedPassword'
 key_login_password = 'KeyAndLoginPassword'
+
 
 def create_database():
     db = sqlite3.connect(file_name)

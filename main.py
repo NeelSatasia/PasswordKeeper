@@ -30,7 +30,7 @@ exit_account_names = '[x] Exit'
 characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
               'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
               '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-              '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', ',', '.', '/', '?', '-', '_', '+', '=', ' ', '/', ":", ";"]
+              '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', ',', '.', '/', '?', '-', '_', '+', '=', ' ', '/', ":", ";", "'"]
 
 def make_encryption_key(key):
     encrypted_key = ''
@@ -129,20 +129,27 @@ if len(get_password_keeper_info(2)) > 0:
 
 else:
     input_create_login_password = getpass('Create login password: ')
-    print()
 
     if len(input_create_login_password) > 0:
-        encrypted_login_password = encrypt(input_create_login_password)
+        input_confirm_login_password = getpass('Confirm login password: ')
+        print()
 
-        if encrypted_login_password == failed_to_encrypt:
-            print('\t' + failed_to_encrypt + '\n')
+        if input_create_login_password == input_confirm_login_password:
+
+            encrypted_login_password = encrypt(input_create_login_password)
+
+            if encrypted_login_password == failed_to_encrypt:
+                print('\t' + failed_to_encrypt + '\n')
+
+            else:
+                add_password_keeper_info(encrypted_login_password)
+                logged_in = True
 
         else:
-            add_password_keeper_info(encrypted_login_password)
-            logged_in = True
+            print("\t(Passwords do not match!)\n")
 
     else:
-        print('\t(Must enter a password!)\n')
+        print('\n\t(Must enter a password!)\n')
 
 
 
@@ -152,7 +159,9 @@ def accounts_menu():
     for encrypted_account_name in get_all_account_names():
         decrypted_account_names.append(decrypt(encrypted_account_name))
 
-    decrypted_account_names.insert(0, exit_account_names)
+    decrypted_account_names.sort()
+
+    decrypted_account_names.append(exit_account_names)
 
     accounts_menu = TerminalMenu(decrypted_account_names)
     accounts_menu_index = accounts_menu.show()
