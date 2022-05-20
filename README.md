@@ -7,3 +7,8 @@ Python Files:
   1. main.py: Takes the input of the user and provides options to change, remove, or add account information.
   2. datamanager.py: Manages all the data entered by the user such as account name, username (optional), and password.
   3. accountinfo.py: AccountInfo object keeps track of every account information.
+
+Modules Required:
+  1. sqlite3
+  2. TerminalMenu
+  3. random
