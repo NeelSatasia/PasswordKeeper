@@ -18,7 +18,7 @@ change_encryption_key = 'Change Encryption Key'
 cancel_a_command = '/cancel'
 close_program = '[x] Close'
 
-print('\n')
+print('\nTo exit any typable command, type /cancel \n')
 
 failed_to_encrypt = '(Failed to encrypt!)'
 failed_to_decrypt = '(Failed to decrypt!)'
@@ -95,18 +95,22 @@ def encrypt(text):
 
 
 def decrypt(text):
-    encrypted_text = text.split('\t')
-    decrypted_text = ''
+    if len(text) > 0:
+        encrypted_text = text.split('\t')
+        decrypted_text = ''
 
-    try:
-        for encryted_character in encrypted_text:
-            encrypted_character_index = len(encryted_character) - 1
-            decrypted_text += encryption_key[encrypted_character_index]
+        try:
+            for encryted_character in encrypted_text:
+                encrypted_character_index = len(encryted_character) - 1
+                decrypted_text += encryption_key[encrypted_character_index]
 
-        return decrypted_text
+            return decrypted_text
 
-    except:
-        return failed_to_decrypt
+        except:
+            return failed_to_decrypt
+
+    else:
+        return ''
 
 
 
