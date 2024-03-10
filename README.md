@@ -1,6 +1,6 @@
 # PasswordKeeper
 
-Description: This project is made to keep all your passwords encrypted in a database file where all the information about your accounts are saved such account name, username, and password. There're multiple commands that do certain actions. When the user selects a command, it will allow the user to do certain things with any stored accounts. For example, if the user selects the add account command, it will ask the user to enter account information. After entering all the info, it will encrypt all that info in the datbase file. If the user wants to see the information, the user can select the access account command and which account the user wants to choose. The program will then decrypt the info, so the user can see it.
+Description: This project is made to keep all your passwords encrypted in a database file where all the information about your accounts are saved such account name, username, and password. There're multiple commands that do certain actions. When the user selects a command, it will allow the user to do certain things with any stored accounts. For example, if the user selects the add account command, it will ask the user to enter account information. After entering all the info, it will encrypt all that info in the database file. If the user wants to see the information, the user can select the access account command and which account the user wants to choose. The program will then decrypt the info, so the user can see it.
 
 Python Files:
 
